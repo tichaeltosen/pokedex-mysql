@@ -9,25 +9,67 @@ class App extends React.Component {
     this.state = {
       types: [],
       allPokes: [],
-      selected: []
+      selected: [],
+      singlePoke: [],
+      changeName: ''
     }
     this.getAllPokemon = this.getAllPokemon.bind(this);
     this.showPokes = this.showPokes.bind(this);
     this.handleSelect = this.handleSelect.bind(this);
     this.handleShowAll = this.handleShowAll.bind(this);
+    this.handleSingle = this.handleSingle.bind(this);
+    this.handleText = this.handleText.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.delete = this.delete.bind(this);
   }
 
   componentDidMount() {
     this.getAllPokemon();
   }
+  handleSubmit(e) {
+    e.preventDefault();
+    let id = this.state.singlePoke[0].id;
+    axios.put(`/api/pokemon/${id}`, {name: this.state.changeName})
+      .then(() => {
+        this.setState({
+          singlePoke: []
+        }, () => this.getAllPokemon())
+      })
+  }
+
+  handleText(e) {
+    this.setState({
+      [e.target.name]: e.target.value
+    })
+  }
 
   handleShowAll(){
     this.setState({
-      selected: []
+      selected: [],
+      singlePoke: []
     }, () => {
       let el = document.getElementById('types');
       el.value = 'Sort by Type';
     })
+  }
+
+  handleSingle(e) {
+    console.log(e.target.textContent);
+    let poke = this.state.allPokes.filter(poke => poke.name === e.target.textContent);
+    this.setState({
+      selected: [],
+      singlePoke: poke
+    })
+  }
+
+  delete() {
+    let id = this.state.singlePoke[0].id;
+    axios.delete(`/api/pokemon/${id}`)
+      .then(() => {
+        this.setState({
+          singlePoke: []
+        }, () => this.getAllPokemon())
+      })
   }
 
   getAllPokemon() {
@@ -46,11 +88,23 @@ class App extends React.Component {
   showPokes() {
     if (this.state.selected.length) {
       return (
-        <Poke pokes={this.state.selected} />
+        <Poke pokes={this.state.selected} handleSingle={this.handleSingle} />
+      )
+    } else if (this.state.singlePoke.length) {
+      return (
+        <div>
+          <Poke pokes={this.state.singlePoke} />
+          <form onSubmit={this.handleSubmit}>
+            <label>Change Name</label>
+            <input name="changeName" onChange={this.handleText}></input>
+            <button>Submit</button>
+          </form>
+          <button onClick={this.delete}>Delete{this.state.singlePoke[0].name}</button>
+        </div>
       )
     } else if (this.state.allPokes.length) {
       return (
-        <Poke pokes={this.state.allPokes} />
+        <Poke pokes={this.state.allPokes} handleSingle={this.handleSingle}/>
       )
     } else {
       return <div></div>

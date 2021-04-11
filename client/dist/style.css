@@ -6,3 +6,8 @@ img {
   width: 10rem;
   height: 10rem;
 }
+
+.poke-name:hover{
+  color: blueviolet;
+  cursor: pointer;
+}

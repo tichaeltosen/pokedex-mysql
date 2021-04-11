@@ -5,5 +5,10 @@ router
   .route('/pokemon')
   .get(controller.get)
 
+router
+  .route('/pokemon/:id')
+  .put(controller.put)
+  .delete(controller.delete)
+
 
   module.exports = router;
