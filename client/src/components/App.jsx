@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import Select from './Select.jsx';
 import Poke from './Poke.jsx';
+import Create from './Create.jsx';
 
 class App extends React.Component {
   constructor (props){
@@ -11,7 +12,8 @@ class App extends React.Component {
       allPokes: [],
       selected: [],
       singlePoke: [],
-      changeName: ''
+      changeName: '',
+      createPage: false
     }
     this.getAllPokemon = this.getAllPokemon.bind(this);
     this.showPokes = this.showPokes.bind(this);
@@ -21,6 +23,7 @@ class App extends React.Component {
     this.handleText = this.handleText.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.delete = this.delete.bind(this);
+    this.newPokePage = this.newPokePage.bind(this);
   }
 
   componentDidMount() {
@@ -37,6 +40,10 @@ class App extends React.Component {
       })
   }
 
+  newPokePage() {
+    this.setState({createPage: true});
+  }
+
   handleText(e) {
     this.setState({
       [e.target.name]: e.target.value
@@ -46,7 +53,8 @@ class App extends React.Component {
   handleShowAll(){
     this.setState({
       selected: [],
-      singlePoke: []
+      singlePoke: [],
+      createPage: false
     }, () => {
       let el = document.getElementById('types');
       el.value = 'Sort by Type';
@@ -124,12 +132,23 @@ class App extends React.Component {
   }
 
   render() {
+    let content = () => {
+      if (!this.state.createPage) {
+        return this.showPokes();
+      } else {
+        return <Create goBack={this.handleShowAll}/>;
+      }
+    }
+
     return (
     <div>
       <h1>Fullstack Pokedex!</h1>
+      <div>
+        <button id="add" onClick={this.newPokePage}>Add New Pokemon</button>
+      </div>
       <button onClick={this.handleShowAll}>Show All</button>
       <Select types={this.state.types} handleSelect={this.handleSelect}/>
-      <div>{this.showPokes()}</div>
+      <div>{content()}</div>
     </div>
     )
   }

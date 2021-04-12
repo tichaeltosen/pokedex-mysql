@@ -4,6 +4,7 @@ const controller = require('./controller.js');
 router
   .route('/pokemon')
   .get(controller.get)
+  .post(controller.post)
 
 router
   .route('/pokemon/:id')

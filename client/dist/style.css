@@ -11,3 +11,13 @@ img {
   color: blueviolet;
   cursor: pointer;
 }
+
+#add:hover{
+  color: blueviolet;
+  cursor: pointer;
+}
+
+#add{
+  margin-bottom: 10px;
+  font-weight: bold;
+}

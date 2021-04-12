@@ -35,6 +35,11 @@ const controller = {
         res.status(200).send(result);
       }
     })
+  },
+
+  post: (req, res) => {
+    console.log(req.body);
+    res.status(200).send('posted');
   }
 }
 
