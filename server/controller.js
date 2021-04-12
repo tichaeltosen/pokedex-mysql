@@ -1,4 +1,6 @@
 const db = require('./db/index.js');
+const Promise = require('bluebird');
+const queryAsync = Promise.promisify(db.query).bind(db);
 
 const controller = {
   get: (req, res) => {
@@ -38,8 +40,22 @@ const controller = {
   },
 
   post: (req, res) => {
-    console.log(req.body);
-    res.status(200).send('posted');
+
+    // insert image, then type and store their result id numbers
+    //then insert a poke with the typeNum and imageNum from the results
+    let imgId, typeId;
+    let {name, type, img} = req.body;
+
+    queryAsync(`insert into images (img) values ("${img}")`)
+      .then(result => {
+        imgId = result.insertId;
+        return queryAsync(`insert into types (type) values  ("${type}")`)
+      }).then(result => {
+        typeId = result.insertId;
+        return queryAsync(`insert into pokemon (name, typeNum, imageNum) values ("${name}", "${typeId}", "${imgId}" )`)
+      }).then(result => {
+        res.status(200).send(result);
+      })
   }
 }
 

@@ -58,6 +58,7 @@ class App extends React.Component {
     }, () => {
       let el = document.getElementById('types');
       el.value = 'Sort by Type';
+      this.getAllPokemon();
     })
   }
 
